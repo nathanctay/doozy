@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/server'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -34,6 +35,7 @@ export default async function RootLayout({
           <div className="flex-1 bg-gradient-to-b from-background to-background/50">
             {children}
             <SpeedInsights />
+            <Analytics />
           </div>
           <Footer />
         </div>
