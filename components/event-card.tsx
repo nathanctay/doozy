@@ -2,6 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays, Flame, MapPin, Users } from "lucide-react"
 import { formatTimeRange, getEventStatus, formatDate } from "@/lib/utils"
+import { getUser } from "@/lib/auth-actions"
 
 interface EventCardProps {
     event: {
@@ -17,8 +18,9 @@ interface EventCardProps {
     }
 }
 
-export function EventCard({ event }: EventCardProps) {
+export async function EventCard({ event }: EventCardProps) {
     const status = getEventStatus(event.start_time, event.end_time)
+    const user = await getUser()
 
     const formatTime = (date: string) => {
         return new Date(date).toLocaleTimeString("en-US", {
@@ -52,7 +54,17 @@ export function EventCard({ event }: EventCardProps) {
             <CardFooter className="border-t pt-4">
                 <div className="flex items-center text-sm text-muted-foreground">
                     <Users className="h-4 w-4 mr-2 text-accent" />
-                    <span>{event.attendees_count || 0} attending</span>
+                    <span>{(user ? (
+                        `${event.attendees_count}`
+                    ) : (
+                        <span className="inline-flex items-center">
+
+                            <span className="bg-muted-foreground/20 blur-[6px] text-zinc-600 select-none" aria-hidden="true">
+                                00
+                            </span>
+                            <span className="sr-only">Sign in to view number of attendees</span>
+                        </span>
+                    )) || 0} attending</span>
                 </div>
             </CardFooter>
         </Card>

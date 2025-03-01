@@ -7,6 +7,7 @@ import { formatDate, formatTime } from "@/lib/utils"
 import { CalendarDays, ExternalLink, MapPin, User, Users } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import { getUser } from "@/lib/auth-actions"
+import { Button } from "@/components/ui/button"
 
 export default async function EventPage({ params }: { params: { id: string } }) {
     const supabase = await createClient()
@@ -141,24 +142,61 @@ export default async function EventPage({ params }: { params: { id: string } }) 
                 <div>
                     <h2 className="text-2xl font-bold mb-4 flex items-center">
                         <Users className="mr-2 h-5 w-5 text-accent" />
-                        Attendees ({event.attendees_count})
+                        Attendees{" "}
+                        {user ? (
+                            `(${event.attendees.length})`
+                        ) : (
+                            <span className="inline-flex items-center">
+                                (
+                                <span className="bg-muted-foreground/20 blur-[6px] text-zinc-600 select-none" aria-hidden="true">
+                                    00
+                                </span>
+                                )<span className="sr-only">Sign in to view number of attendees</span>
+                            </span>
+                        )}
                     </h2>
 
-                    {event.attendees.length > 0 ? (
-                        <div className="grid gap-2">
-                            {event.attendees.map((attendee: any) => (
-                                <div
-                                    key={attendee.user_id}
-                                    className="flex items-center p-3 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-md"
-                                >
-                                    <User className="h-5 w-5 mr-2 text-primary" />
-                                    <span>{attendee.profiles?.name || "Anonymous User"}</span>
-                                </div>
-                            ))}
-                        </div>
+                    {user ? (
+                        event.attendees.length > 0 ? (
+                            <div className="grid gap-2">
+                                {event.attendees.map((attendee: any) => (
+                                    <div
+                                        key={attendee.user_id}
+                                        className="flex items-center p-3 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-md"
+                                    >
+                                        <User className="h-5 w-5 mr-2 text-primary" />
+                                        <span>{attendee.profiles?.name || "Anonymous User"}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                                <p>Be the first to attend this event!</p>
+                            </div>
+                        )
                     ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                            <p>Be the first to attend this event!</p>
+                        <div className="text-center py-8 space-y-4">
+                            <p className="text-muted-foreground">
+                                <Link
+                                    href={{
+                                        pathname: "/login",
+                                        query: { redirect: `/events/${params.id}` },
+                                    }}
+                                    className="text-primary hover:underline"
+                                >
+                                    Sign in
+                                </Link>
+                                &nbsp;to view attendees</p>
+                            {/* <Button asChild>
+                                <Link
+                                    href={{
+                                        pathname: "/login",
+                                        query: { redirect: `/events/${params.id}` },
+                                    }}
+                                >
+                                    Sign in
+                                </Link>
+                            </Button> */}
                         </div>
                     )}
                 </div>
