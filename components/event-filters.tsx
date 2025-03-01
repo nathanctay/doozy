@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon, X } from "lucide-react"
-import { cn, formatDate } from "@/lib/utils"
 import { useState } from "react"
 import { format } from "date-fns"
 
@@ -29,7 +28,7 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
 
     const updateFilter = (key: string, value: string | null) => {
         const newParams = new URLSearchParams(params.toString())
-        if (value) {
+        if (value && !["all", "any"].includes(value)) {
             newParams.set(key, value)
         } else {
             newParams.delete(key)

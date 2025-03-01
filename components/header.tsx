@@ -9,6 +9,7 @@ import { CalendarHeart, LogOut, Menu, UserIcon } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { User } from '@supabase/supabase-js'
 import { signOutAction } from "@/app/actions"
+import { useState } from "react"
 
 interface HeaderProps {
     user: User | null
@@ -16,6 +17,7 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
     const pathname = usePathname()
+    const [isOpen, setIsOpen] = useState(false)
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -81,13 +83,12 @@ export function Header({ user }: HeaderProps) {
                 </div>
 
                 {/* Mobile Menu */}
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="md:hidden">
-                            <Menu className="h-5 w-5" />
-                            <span className="sr-only">Toggle menu</span>
-                        </Button>
-                    </SheetTrigger>
+                <Sheet open={isOpen} onOpenChange={setIsOpen}>                    <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="md:hidden">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle menu</span>
+                    </Button>
+                </SheetTrigger>
                     <SheetContent>
                         <SheetHeader>
                             {user && (
@@ -106,21 +107,32 @@ export function Header({ user }: HeaderProps) {
                             )}
                         </SheetHeader>
                         <div className="grid gap-4 py-4">
-                            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-                                Home
+                            <Link
+                                href="/"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                                onClick={() => setIsOpen(false)}
+                            >                                Home
                             </Link>
-                            <Link href="/events" className="text-sm font-medium hover:text-primary transition-colors">
-                                Browse Events
+                            <Link
+                                href="/events"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                                onClick={() => setIsOpen(false)}
+                            >                                Browse Events
                             </Link>
                             {user ? (
                                 <>
-                                    <Link href="/my-events" className="text-sm font-medium hover:text-primary transition-colors">
+                                    <Link
+                                        href="/my-events"
+                                        className="text-sm font-medium hover:text-primary transition-colors"
+                                        onClick={() => setIsOpen(false)}
+                                    >
                                         My Events
                                     </Link>
                                     <Separator />
                                     <Link
                                         href="/profile"
                                         className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+                                        onClick={() => setIsOpen(false)}
                                     >
                                         <UserIcon className="h-4 w-4" />
                                         Profile
@@ -140,6 +152,7 @@ export function Header({ user }: HeaderProps) {
                                                     pathname: "/login",
                                                     query: { redirect: pathname },
                                                 }}
+                                                onClick={() => setIsOpen(false)}
                                             >
                                                 Log in
                                             </Link>
@@ -150,6 +163,7 @@ export function Header({ user }: HeaderProps) {
                                                     pathname: "/register",
                                                     query: { redirect: pathname },
                                                 }}
+                                                onClick={() => setIsOpen(false)}
                                             >
                                                 Sign up
                                             </Link>
@@ -161,7 +175,7 @@ export function Header({ user }: HeaderProps) {
                     </SheetContent>
                 </Sheet>
             </div>
-        </header>
+        </header >
     )
 }
 
