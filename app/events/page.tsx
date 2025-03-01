@@ -5,6 +5,7 @@ import { SearchHeader } from "@/components/search-header"
 import { Suspense } from "react"
 import { EventsLoading } from "@/components/events-loading"
 import { createClient } from "@/utils/supabase/server"
+import { getUser } from "@/lib/auth-actions"
 
 interface PageProps {
     searchParams: {
@@ -19,6 +20,7 @@ interface PageProps {
 
 export default async function EventsPage({ searchParams: params }: PageProps) {
     const supabase = await createClient()
+    const user = await getUser()
     const searchParams = await params
     // Near the start of your page component, add a default sort if none exists
     const sortParam = searchParams.sort || "score"
@@ -118,6 +120,7 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
                                 currentPage={page}
                                 pageSize={pageSize}
                                 searchParams={searchParams}
+                                user={user}
                             />
                         </Suspense>
                     </div>

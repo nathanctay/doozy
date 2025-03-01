@@ -28,13 +28,15 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
 
     const updateFilter = (key: string, value: string | null) => {
         const newParams = new URLSearchParams(params.toString())
-        if (value && !["all", "any"].includes(value)) {
-            newParams.set(key, value)
-        } else {
+
+        if (!value || value === "all") {
             newParams.delete(key)
+        } else {
+            newParams.set(key, value)
         }
+
         newParams.set("page", "1")
-        router.push(`${pathname}?${newParams.toString()}`)
+        router.push(`${pathname}?${newParams.toString()}`, { scroll: false })
     }
 
     const clearFilters = () => {
@@ -80,7 +82,10 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
             <CardContent className="grid gap-4">
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Event Type</label>
-                    <Select value={searchParams.type || ""} onValueChange={(value) => updateFilter("type", value)}>
+                    <Select
+                        value={params.get("type") || "all"}
+                        onValueChange={(value) => updateFilter("type", value)}
+                    >
                         <SelectTrigger>
                             <SelectValue placeholder="All types" />
                         </SelectTrigger>
