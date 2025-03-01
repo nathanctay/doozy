@@ -51,3 +51,17 @@ export async function updateAttendance(eventId: string, attendees_count: number,
     revalidatePath("/")
 }
 
+export async function updateProfile({ id, name }: {
+    id: string
+    name: string
+}) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('profiles')
+        .upsert({ id, name })
+
+    if (error) return { error: error.message }
+    return { success: true }
+}
+
