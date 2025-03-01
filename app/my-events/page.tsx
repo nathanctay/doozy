@@ -20,8 +20,9 @@ interface PageProps {
     }
 }
 
-export default async function MyEventsPage({ searchParams }: PageProps) {
+export default async function MyEventsPage({ searchParams: params }: PageProps) {
     const supabase = await createClient()
+    const searchParams = await params
     // const searchParams = await useSearchParams()
 
     // Build the query
@@ -40,23 +41,21 @@ export default async function MyEventsPage({ searchParams }: PageProps) {
     }
 
     if (searchParams.date) {
-        const today = new Date()
-        switch (searchParams.date) {
-            case "today":
-                query = query
-                    .gte("date", today.toISOString().split("T")[0])
-                    .lt("date", new Date(today.setDate(today.getDate() + 1)).toISOString().split("T")[0])
-                break
-            case "week":
-                query = query
-                    .gte("date", today.toISOString().split("T")[0])
-                    .lt("date", new Date(today.setDate(today.getDate() + 7)).toISOString().split("T")[0])
-                break
-            case "month":
-                query = query
-                    .gte("date", today.toISOString().split("T")[0])
-                    .lt("date", new Date(today.setMonth(today.getMonth() + 1)).toISOString().split("T")[0])
-                break
+        try {
+            // Check if the date matches YYYY-MM-DD format
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(searchParams.date)) {
+                console.error("Invalid date format:", searchParams.date)
+            } else {
+                // Parse the date in YYYY-MM-DD format and create local midnight timestamps
+                const selectedDate = new Date(`${searchParams.date}T00:00:00`)
+                const nextDate = new Date(`${searchParams.date}T00:00:00`)
+                nextDate.setDate(nextDate.getDate() + 1)
+
+                query = query.gte("start_time", selectedDate.toISOString())
+                    .lt("start_time", nextDate.toISOString())
+            }
+        } catch (error) {
+            console.error("Error processing date:", error, searchParams.date)
         }
     }
 
@@ -74,16 +73,16 @@ export default async function MyEventsPage({ searchParams }: PageProps) {
     // Apply sorting
     switch (searchParams.sort) {
         case "date-asc":
-            query = query.order("date", { ascending: true })
+            query = query.order("start_time", { ascending: true })
             break
         case "date-desc":
-            query = query.order("date", { ascending: false })
+            query = query.order("start_time", { ascending: false })
             break
         case "popular":
             query = query.order("score", { ascending: false })
             break
         default:
-            query = query.order("score", { ascending: true })
+            query = query.order("score", { ascending: false })
     }
 
     // Apply pagination

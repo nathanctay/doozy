@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search } from "lucide-react"
@@ -11,6 +11,7 @@ import { useState } from "react"
 export function SearchHeader() {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const pathname = usePathname()
     const [query, setQuery] = useState(searchParams.get("query") || "")
 
     const handleSearch = (e: React.FormEvent) => {
@@ -22,14 +23,14 @@ export function SearchHeader() {
             params.delete("query")
         }
         params.set("page", "1")
-        router.push(`/events?${params.toString()}`)
+        router.push(`${pathname}?${params.toString()}`)
     }
 
     const handleSort = (value: string) => {
         const params = new URLSearchParams(searchParams.toString())
         params.set("sort", value)
         params.set("page", "1")
-        router.push(`/events?${params.toString()}`)
+        router.push(`${pathname}?${params.toString()}`)
     }
 
     return (

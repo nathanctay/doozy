@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -24,6 +24,7 @@ interface EventFiltersProps {
 export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
     const router = useRouter()
     const params = useSearchParams()
+    const pathname = usePathname()
     const [date, setDate] = useState<Date | undefined>(searchParams.date ? new Date(searchParams.date) : undefined)
 
     const updateFilter = (key: string, value: string | null) => {
@@ -34,7 +35,7 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
             newParams.delete(key)
         }
         newParams.set("page", "1")
-        router.push(`/events?${newParams.toString()}`)
+        router.push(`${pathname}?${newParams.toString()}`)
     }
 
     const clearFilters = () => {
@@ -45,7 +46,7 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
         if (params.has("sort")) {
             newParams.set("sort", params.get("sort")!)
         }
-        router.push(`/events?${newParams.toString()}`)
+        router.push(`${pathname}?${newParams.toString()}`)
         setDate(undefined)
     }
 

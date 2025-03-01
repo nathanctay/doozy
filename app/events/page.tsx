@@ -24,7 +24,8 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
     const sortParam = searchParams.sort || "score"
 
     // Build the query
-    let query = supabase.from("events").select("*", { count: "exact" })
+    let query = supabase.from("events").select("*", { count: "exact" }).gte('end_time', new Date().toISOString())
+
 
     // Apply filters
     if (searchParams.query) {
