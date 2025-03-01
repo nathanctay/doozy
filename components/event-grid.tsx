@@ -20,9 +20,10 @@ interface EventGridProps {
     currentPage: number
     pageSize: number
     searchParams: { [key: string]: string | undefined }
+    user?: any
 }
 
-export function EventGrid({ events, totalEvents, currentPage, pageSize, searchParams }: EventGridProps) {
+export function EventGrid({ events, totalEvents, currentPage, pageSize, searchParams, user }: EventGridProps) {
     const router = useRouter()
     const params = searchParams
     const pathname = usePathname()
@@ -78,7 +79,7 @@ export function EventGrid({ events, totalEvents, currentPage, pageSize, searchPa
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {events.map((event) => (
                             <Link href={`events/${event.id}`} key={event.id}>
-                                <EventCard event={event} />
+                                <EventCard event={event} user={user} />
                             </Link>
                         ))}
                     </div>
