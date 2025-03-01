@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Icons } from "@/components/icons"
 import { login } from "@/lib/auth-actions"
 import { toast } from "sonner"
+import { Eye, EyeOff } from "lucide-react"
 
 const formSchema = z.object({
     email: z.string().email({
@@ -30,6 +31,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     const router = useRouter()
     const [isPending, startTransition] = React.useTransition()
     const [error, setError] = React.useState<string | null>(null)
+    const [showPassword, setShowPassword] = React.useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -100,7 +102,30 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="••••••••" type="password" disabled={isPending} {...field} />
+                                    <div className="relative">
+
+                                        <Input
+                                            placeholder=""
+                                            type={showPassword ? "text" : "password"}
+                                            disabled={isPending}
+                                            {...field}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            disabled={isPending}
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                            ) : (
+                                                <Eye className="h-4 w-4 text-muted-foreground" />
+                                            )}
+                                            <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                                        </Button>
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -112,7 +137,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
                     </Button>
                 </form>
             </Form>
-            <div className="relative">
+            {/* <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t" />
                 </div>
@@ -127,7 +152,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
                     <Icons.google className="mr-2 h-4 w-4" />
                 )}{" "}
                 Google
-            </Button>
+            </Button> */}
             <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
                 <Link href="/register" className="text-primary hover:underline">

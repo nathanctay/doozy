@@ -9,9 +9,9 @@ export default async function ResetPasswordPage() {
         data: { session },
     } = await supabase.auth.getSession()
 
-    if (session) {
-        redirect("/")
-    }
+    // if (session) {
+    //     redirect("/")
+    // }
 
     return <ResetPasswordForm />
 }

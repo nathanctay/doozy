@@ -1,4 +1,3 @@
-import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { ProfileForm } from "@/components/profile/profile-form"
 import { createClient } from "@/utils/supabase/server"

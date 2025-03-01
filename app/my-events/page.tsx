@@ -1,11 +1,8 @@
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
 import { EventGrid } from "@/components/event-grid"
 import { EventFilters } from "@/components/event-filters"
 import { SearchHeader } from "@/components/search-header"
 import { Suspense } from "react"
 import { EventsLoading } from "@/components/events-loading"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createClient } from "@/utils/supabase/server"
 
 interface PageProps {

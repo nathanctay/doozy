@@ -7,7 +7,6 @@ import { formatDate, formatTime } from "@/lib/utils"
 import { CalendarDays, ExternalLink, MapPin, User, Users } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 import { getUser } from "@/lib/auth-actions"
-import { Button } from "@/components/ui/button"
 
 export default async function EventPage({ params }: { params: { id: string } }) {
     const supabase = await createClient()

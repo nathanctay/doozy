@@ -1,4 +1,3 @@
-import { cookies } from "next/headers"
 import { EventGrid } from "@/components/event-grid"
 import { EventFilters } from "@/components/event-filters"
 import { SearchHeader } from "@/components/search-header"

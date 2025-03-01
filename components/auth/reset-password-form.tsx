@@ -29,6 +29,7 @@ export function ResetPasswordForm() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [isPending, startTransition] = React.useTransition()
+    const [error, setError] = React.useState<string | null>(null)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -47,6 +48,7 @@ export function ResetPasswordForm() {
                 })
 
                 if (result.error) {
+                    setError(result.error)
                     toast("Error", {
                         description: result.error,
                     })
@@ -72,6 +74,7 @@ export function ResetPasswordForm() {
                 <h1 className="text-2xl font-bold">Reset your password</h1>
                 <p className="text-muted-foreground">Enter your new password below</p>
             </div>
+            {error && <div className="text-red-500">{error}</div>}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
@@ -81,7 +84,7 @@ export function ResetPasswordForm() {
                             <FormItem>
                                 <FormLabel>New Password</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="••••••••" type="password" disabled={isPending} {...field} />
+                                    <Input placeholder="" type="password" disabled={isPending} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -94,7 +97,7 @@ export function ResetPasswordForm() {
                             <FormItem>
                                 <FormLabel>Confirm Password</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="••••••••" type="password" disabled={isPending} {...field} />
+                                    <Input placeholder="" type="password" disabled={isPending} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

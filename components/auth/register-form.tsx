@@ -146,7 +146,7 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
                                 <FormControl>
                                     <div className="relative">
                                         <Input
-                                            placeholder="••••••••"
+                                            placeholder=""
                                             type={showPassword ? "text" : "password"}
                                             disabled={isPending}
                                             {...field}
@@ -181,7 +181,7 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
                                 <FormControl>
                                     <div className="relative">
                                         <Input
-                                            placeholder="••••••••"
+                                            placeholder=""
                                             type={showConfirmPassword ? "text" : "password"}
                                             disabled={isPending}
                                             {...field}
@@ -213,7 +213,7 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
                     </Button>
                 </form>
             </Form>
-            <div className="relative">
+            {/* <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t" />
                 </div>
@@ -228,7 +228,7 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
                     <Icons.google className="mr-2 h-4 w-4" />
                 )}{" "}
                 Google
-            </Button>
+            </Button> */}
             <div className="text-center text-sm">
                 Already have an account?{" "}
                 <Link href="/auth/login" className="text-primary hover:underline">
