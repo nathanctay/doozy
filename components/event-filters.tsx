@@ -1,10 +1,15 @@
 "use client"
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon, X } from "lucide-react"
+import { cn, formatDate } from "@/lib/utils"
+import { useState } from "react"
+import { format } from "date-fns"
 
 interface EventFiltersProps {
     eventTypes: string[]
@@ -18,19 +23,18 @@ interface EventFiltersProps {
 
 export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
     const router = useRouter()
-    const pathname = usePathname()
-    console.log(pathname)
     const params = useSearchParams()
+    const [date, setDate] = useState<Date | undefined>(searchParams.date ? new Date(searchParams.date) : undefined)
 
     const updateFilter = (key: string, value: string | null) => {
         const newParams = new URLSearchParams(params.toString())
-        if (value && !['all', 'any'].includes(value)) {
+        if (value) {
             newParams.set(key, value)
         } else {
             newParams.delete(key)
         }
         newParams.set("page", "1")
-        router.push(`${pathname}?${newParams.toString()}`)
+        router.push(`/events?${newParams.toString()}`)
     }
 
     const clearFilters = () => {
@@ -41,15 +45,20 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
         if (params.has("sort")) {
             newParams.set("sort", params.get("sort")!)
         }
-        router.push(`${pathname}?${newParams.toString()}`)
+        router.push(`/events?${newParams.toString()}`)
+        setDate(undefined)
     }
 
     const hasFilters = params.has("type") || params.has("date") || params.has("price")
 
-    // Helper function to get the current value or default
-    const getCurrentValue = (key: 'type' | 'date' | 'price') => {
-        const value = params.get(key)
-        return value || ''
+    const handleDateSelect = (date: Date | undefined) => {
+        if (!date) {
+            updateFilter("date", null)
+            return
+        }
+
+        const formattedDate = format(date, "yyyy-MM-dd")
+        updateFilter("date", formattedDate)
     }
 
     return (
@@ -71,7 +80,7 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
             <CardContent className="grid gap-4">
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Event Type</label>
-                    <Select value={getCurrentValue('type')} onValueChange={(value) => updateFilter("type", value)}>
+                    <Select value={searchParams.type || ""} onValueChange={(value) => updateFilter("type", value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="All types" />
                         </SelectTrigger>
@@ -88,22 +97,47 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Date</label>
-                    <Select value={getCurrentValue('date')} onValueChange={(value) => updateFilter("date", value)}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Any date" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="any">Any date</SelectItem>
-                            <SelectItem value="today">Today</SelectItem>
-                            <SelectItem value="week">This week</SelectItem>
-                            <SelectItem value="month">This month</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="w-full justify-start text-left font-normal"
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {params.get("date") && /^\d{4}-\d{2}-\d{2}$/.test(params.get("date")!) ? (
+                                    format(new Date(`${params.get("date")}T00:00:00`), "PPP")
+                                ) : (
+                                    <span>Pick a date</span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                            <Calendar
+                                mode="single"
+                                selected={params.get("date") && /^\d{4}-\d{2}-\d{2}$/.test(params.get("date")!)
+                                    ? new Date(`${params.get("date")}T00:00:00`)
+                                    : undefined}
+                                onSelect={handleDateSelect}
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                    {date && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="mt-1 h-auto p-0 text-muted-foreground hover:text-foreground"
+                            onClick={() => handleDateSelect(undefined)}
+                        >
+                            <X className="mr-2 h-3 w-3" />
+                            Clear date
+                        </Button>
+                    )}
                 </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Price</label>
-                    <Select value={getCurrentValue('price')} onValueChange={(value) => updateFilter("price", value)}>
+                    <Select value={searchParams.price || ""} onValueChange={(value) => updateFilter("price", value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Any price" />
                         </SelectTrigger>

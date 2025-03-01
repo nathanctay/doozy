@@ -1,4 +1,3 @@
-import { cookies } from "next/headers"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { AttendButton } from "@/components/attend-button"
@@ -7,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import { formatDate, formatTime } from "@/lib/utils"
 import { CalendarDays, ExternalLink, MapPin, User, Users } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
+import { getUser } from "@/lib/auth-actions"
 
 export default async function EventPage({ params }: { params: { id: string } }) {
     const supabase = await createClient()
@@ -30,9 +30,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
     }
 
     // Get current user
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    const user = await getUser()
 
     // Check if user is already attending
     const isAttending = event.attendees.some((attendee: any) => attendee.user_id === user?.id)
@@ -143,7 +141,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
                 <div>
                     <h2 className="text-2xl font-bold mb-4 flex items-center">
                         <Users className="mr-2 h-5 w-5 text-accent" />
-                        Attendees ({event.attendees.length})
+                        Attendees ({event.attendees_count})
                     </h2>
 
                     {event.attendees.length > 0 ? (

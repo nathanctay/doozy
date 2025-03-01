@@ -28,8 +28,9 @@ export function AttendButton({ eventId, attendees_count, isAttending, userId }: 
 
         setIsPending(true)
         try {
-            await updateAttendance(eventId, attendees_count, !attending)
-            setAttending(!attending)
+            updateAttendance(eventId, attendees_count, !attending).then((result) => {
+                setAttending(!attending)
+            })
         } catch (error) {
             console.error("Error updating attendance:", error)
         } finally {

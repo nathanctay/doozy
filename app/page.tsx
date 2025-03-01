@@ -2,13 +2,12 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { EventCard } from '@/components/event-card'
 import { Button } from '@/components/ui/button'
-import { CalendarDays, MapPin, Plus, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 
 export default async function Home() {
   const supabase = await createClient()
 
-  // Fetch events from Supabase
   const { data: events, error } = await supabase
     .from('events')
     .select('*')
@@ -83,20 +82,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      {/* <section className="py-12 md:py-16 bg-gradient-to-r from-primary/10 to-secondary/10">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <h2 className="text-3xl font-bold">Ready to host your own event?</h2>
-            <p className="max-w-[600px] text-muted-foreground">
-              Share your passion, build community, and create memorable experiences.
-            </p>
-            <Button size="lg" asChild>
-              <Link href="/events/new">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </section> */}
+
     </main>
   )
 }

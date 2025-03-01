@@ -11,6 +11,11 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Doozy - Find Events Near You',
   description: 'Discover and join exciting events happening in your area',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+  },
+
 }
 
 export default async function RootLayout({

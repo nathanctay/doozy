@@ -20,13 +20,11 @@ interface PageProps {
 export default async function EventsPage({ searchParams: params }: PageProps) {
     const supabase = await createClient()
     const searchParams = await params
-    // Build the query
-    // let query = supabase.from("events").select("*", { count: "exact" })
+    // Near the start of your page component, add a default sort if none exists
+    const sortParam = searchParams.sort || "score"
 
-    let query = supabase
-        .from("events")
-        .select("*", { count: "exact" })
-        .gte('end_time', new Date().toISOString())
+    // Build the query
+    let query = supabase.from("events").select("*", { count: "exact" })
 
     // Apply filters
     if (searchParams.query) {
@@ -38,23 +36,21 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
     }
 
     if (searchParams.date) {
-        const now = new Date()
-        switch (searchParams.date) {
-            case "today":
-                const todayStart = new Date(now.setHours(0, 0, 0, 0)).toISOString()
-                const todayEnd = new Date(now.setHours(23, 59, 59, 999)).toISOString()
-                query = query.gte("start_time", todayStart).lte("start_time", todayEnd)
-                break
-            case "week":
-                const weekEnd = new Date(now)
-                weekEnd.setDate(weekEnd.getDate() + 7)
-                query = query.gte("start_time", now.toISOString()).lt("start_time", weekEnd.toISOString())
-                break
-            case "month":
-                const monthEnd = new Date(now)
-                monthEnd.setMonth(monthEnd.getMonth() + 1)
-                query = query.gte("start_time", now.toISOString()).lt("start_time", monthEnd.toISOString())
-                break
+        try {
+            // Check if the date matches YYYY-MM-DD format
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(searchParams.date)) {
+                console.error("Invalid date format:", searchParams.date)
+            } else {
+                // Parse the date in YYYY-MM-DD format and create local midnight timestamps
+                const selectedDate = new Date(`${searchParams.date}T00:00:00`)
+                const nextDate = new Date(`${searchParams.date}T00:00:00`)
+                nextDate.setDate(nextDate.getDate() + 1)
+
+                query = query.gte("start_time", selectedDate.toISOString())
+                    .lt("start_time", nextDate.toISOString())
+            }
+        } catch (error) {
+            console.error("Error processing date:", error, searchParams.date)
         }
     }
 
@@ -80,9 +76,6 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
         case "popular":
             query = query.order("score", { ascending: false })
             break
-        case "score":
-            query = query.order("score", { ascending: false })
-            break
         default:
             query = query.order("score", { ascending: false })
     }
@@ -96,7 +89,7 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
 
     // Execute query
     const { data: events, count, error } = await query
-    // console.log(events)
+
     if (error) {
         console.error("Error fetching events:", error)
     }

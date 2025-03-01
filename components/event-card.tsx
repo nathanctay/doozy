@@ -24,11 +24,10 @@ export function EventCard({ event }: EventCardProps) {
         return new Date(date).toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
-            hour12: true, // Ensures 24-hour format (optional)
-            timeZone: "UTC" // Forces UTC, preventing local timezone conversion
+            hour12: true,
+            timeZone: "UTC"
         });
     };
-
 
     return (
         <Card className="h-full hover:shadow-md transition-shadow overflow-hidden border-primary/20">
@@ -48,10 +47,6 @@ export function EventCard({ event }: EventCardProps) {
                         <div>Starts: {formatDate(event.start_time)} at {formatTime(event.start_time)}</div>
                         <div>Ends: {formatDate(event.end_time)} at {formatTime(event.end_time)}</div>
                     </div>
-                </div>
-                <div className="flex items-center text-muted-foreground">
-                    {/* <MapPin className="h-4 w-4 mr-2 text-primary" /> */}
-                    {/* <span className="line-clamp-1">{event.location}</span> */}
                 </div>
             </CardContent>
             <CardFooter className="border-t pt-4">
