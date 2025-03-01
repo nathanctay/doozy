@@ -25,8 +25,12 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
     const sortParam = searchParams.sort || "score"
 
     // Build the query
-    let query = supabase.from("events").select("*", { count: "exact" }).gte('end_time', new Date().toISOString())
-
+    let query = supabase
+        .from("events")
+        .select("*", { count: "exact" })
+        // .gte('end_time', new Date().toISOString().split('T')[0]) // Compare just the date part
+        // Alternatively, if you want to be precise with time:
+        .gte('end_time', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString())
 
     // Apply filters
     if (searchParams.query) {
@@ -91,7 +95,7 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
 
     // Execute query
     const { data: events, count, error } = await query
-
+    console.log(events)
     if (error) {
         console.error("Error fetching events:", error)
     }
