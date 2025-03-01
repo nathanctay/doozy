@@ -28,9 +28,9 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
     let query = supabase
         .from("events")
         .select("*", { count: "exact" })
-        // .gte('end_time', new Date().toISOString().split('T')[0]) // Compare just the date part
-        // Alternatively, if you want to be precise with time:
-        .gte('end_time', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString())
+        .gte('end_time', new Date().toISOString().split('T')[0]) // Compare just the date part
+    // Alternatively, if you want to be precise with time:
+    // .gte('end_time', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString())
 
 
     // Apply filters
