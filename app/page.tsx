@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { EventCard } from '@/components/event-card'
 import { Button } from '@/components/ui/button'
@@ -32,7 +31,7 @@ export default async function Home() {
               Find Your Next <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Adventure</span>
             </h1>
             <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
-              In <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Logan, Utah</span>
+              In <span className="bg-gradient-to-r from-secondary via-primary to-secondary bg-[length:200%_auto] animate-gradient-x bg-clip-text text-transparent">Logan, Utah</span>
             </h2>
             <p className="max-w-[700px] text-muted-foreground md:text-xl">
               Join exciting events, meet new people, and create unforgettable memories in your community.
