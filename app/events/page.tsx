@@ -32,6 +32,7 @@ export default async function EventsPage({ searchParams: params }: PageProps) {
         // Alternatively, if you want to be precise with time:
         .gte('end_time', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString())
 
+
     // Apply filters
     if (searchParams.query) {
         query = query.ilike("title", `%${searchParams.query}%`)
