@@ -24,9 +24,8 @@ interface EventGridProps {
 
 export function EventGrid({ events, totalEvents, currentPage, pageSize, searchParams }: EventGridProps) {
     const router = useRouter()
-    const params = useSearchParams()
+    const params = searchParams
     const pathname = usePathname()
-    console.log(usePathname())
 
     const totalPages = Math.ceil(totalEvents / pageSize)
 

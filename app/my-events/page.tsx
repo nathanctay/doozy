@@ -25,7 +25,10 @@ export default async function MyEventsPage({ searchParams }: PageProps) {
     // const searchParams = await useSearchParams()
 
     // Build the query
-    let query = supabase.from("my_events").select("*", { count: "exact" })
+    let query = supabase.from("my_events")
+        .select("*", { count: "exact" })
+        .gte('end_time', new Date().toISOString())
+
 
     // Apply filters
     if (searchParams.query) {
@@ -77,10 +80,10 @@ export default async function MyEventsPage({ searchParams }: PageProps) {
             query = query.order("date", { ascending: false })
             break
         case "popular":
-            query = query.order("attendees_count", { ascending: false })
+            query = query.order("score", { ascending: false })
             break
         default:
-            query = query.order("date", { ascending: true })
+            query = query.order("score", { ascending: true })
     }
 
     // Apply pagination

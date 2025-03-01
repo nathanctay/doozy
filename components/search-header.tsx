@@ -50,14 +50,14 @@ export function SearchHeader() {
 
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
-                        <Select defaultValue={searchParams.get("sort") || "date-asc"} onValueChange={handleSort}>
+                        <Select defaultValue={searchParams.get("sort") || "popular"} onValueChange={handleSort}>
                             <SelectTrigger className="w-[180px] bg-background">
                                 <SelectValue placeholder="Sort by" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="popular">Most popular</SelectItem>
                                 <SelectItem value="date-asc">Date: Earliest first</SelectItem>
                                 <SelectItem value="date-desc">Date: Latest first</SelectItem>
-                                <SelectItem value="popular">Most popular</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

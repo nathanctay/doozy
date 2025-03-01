@@ -1,22 +1,34 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CalendarDays, MapPin, Users } from "lucide-react"
-import { formatTimeRange, getEventStatus } from "@/lib/utils"
+import { CalendarDays, Flame, MapPin, Users } from "lucide-react"
+import { formatTimeRange, getEventStatus, formatDate } from "@/lib/utils"
 
 interface EventCardProps {
     event: {
         id: string
         title: string
+        description: string
         start_time: string
         end_time: string
         location: string
         event_type: string
         attendees_count: number
+        score: number
     }
 }
 
 export function EventCard({ event }: EventCardProps) {
     const status = getEventStatus(event.start_time, event.end_time)
+
+    const formatTime = (date: string) => {
+        return new Date(date).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true, // Ensures 24-hour format (optional)
+            timeZone: "UTC" // Forces UTC, preventing local timezone conversion
+        });
+    };
+
 
     return (
         <Card className="h-full hover:shadow-md transition-shadow overflow-hidden border-primary/20">
@@ -24,18 +36,22 @@ export function EventCard({ event }: EventCardProps) {
             <CardContent className="pt-6">
                 <div className="flex gap-2 mb-2">
                     <Badge className="bg-secondary hover:bg-secondary/80">{event.event_type}</Badge>
-                    <Badge variant={status === "ongoing" ? "default" : status === "ended" ? "secondary" : "outline"}>
+                    {event.score > 28 && <Badge className="bg-primary hover:bg-primary/80">Hot<Flame /></Badge>}
+                    {/* <Badge variant={status === "ongoing" ? "default" : status === "ended" ? "secondary" : "outline"}>
                         {status === "ongoing" ? "Happening now" : status === "ended" ? "Ended" : "Upcoming"}
-                    </Badge>
+                    </Badge> */}
                 </div>
                 <h3 className="text-xl font-bold mb-2 line-clamp-2">{event.title}</h3>
-                <div className="flex items-center text-muted-foreground mb-2">
-                    <CalendarDays className="h-4 w-4 mr-2 text-primary" />
-                    <span className="line-clamp-1">{formatTimeRange(event.start_time, event.end_time)}</span>
+                <div className="flex items-start gap-2 mb-2 text-muted-foreground">
+                    <CalendarDays className="h-4 w-4 mt-0.5" />
+                    <div className="space-y-1">
+                        <div>Starts: {formatDate(event.start_time)} at {formatTime(event.start_time)}</div>
+                        <div>Ends: {formatDate(event.end_time)} at {formatTime(event.end_time)}</div>
+                    </div>
                 </div>
                 <div className="flex items-center text-muted-foreground">
-                    <MapPin className="h-4 w-4 mr-2 text-primary" />
-                    <span className="line-clamp-1">{event.location}</span>
+                    {/* <MapPin className="h-4 w-4 mr-2 text-primary" /> */}
+                    {/* <span className="line-clamp-1">{event.location}</span> */}
                 </div>
             </CardContent>
             <CardFooter className="border-t pt-4">

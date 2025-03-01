@@ -17,11 +17,16 @@ interface PageProps {
     }
 }
 
-export default async function EventsPage({ searchParams }: PageProps) {
+export default async function EventsPage({ searchParams: params }: PageProps) {
     const supabase = await createClient()
-
+    const searchParams = await params
     // Build the query
-    let query = supabase.from("events").select("*", { count: "exact" })
+    // let query = supabase.from("events").select("*", { count: "exact" })
+
+    let query = supabase
+        .from("events")
+        .select("*", { count: "exact" })
+        .gte('end_time', new Date().toISOString())
 
     // Apply filters
     if (searchParams.query) {
@@ -73,10 +78,13 @@ export default async function EventsPage({ searchParams }: PageProps) {
             query = query.order("start_time", { ascending: false })
             break
         case "popular":
-            query = query.order("attendees_count", { ascending: false })
+            query = query.order("score", { ascending: false })
+            break
+        case "score":
+            query = query.order("score", { ascending: false })
             break
         default:
-            query = query.order("start_time", { ascending: true })
+            query = query.order("score", { ascending: false })
     }
 
     // Apply pagination
@@ -88,7 +96,7 @@ export default async function EventsPage({ searchParams }: PageProps) {
 
     // Execute query
     const { data: events, count, error } = await query
-
+    // console.log(events)
     if (error) {
         console.error("Error fetching events:", error)
     }

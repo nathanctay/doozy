@@ -12,7 +12,8 @@ export default async function Home() {
   const { data: events, error } = await supabase
     .from('events')
     .select('*')
-    .order('date', { ascending: true })
+    .order('score', { ascending: false })
+    .gte('end_time', new Date().toISOString())
     .limit(6)
 
   if (error) {

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { AttendButton } from "@/components/attend-button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { formatDate } from "@/lib/utils"
+import { formatDate, formatTime } from "@/lib/utils"
 import { CalendarDays, ExternalLink, MapPin, User, Users } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
 
@@ -41,25 +41,34 @@ export default async function EventPage({ params }: { params: { id: string } }) 
         const start = new Date(startTime)
         const end = new Date(endTime)
 
-        const startFormatted = start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        const endFormatted = end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        const startDateFormatted = formatDate(startTime)
+        const endDateFormatted = formatDate(endTime)
+        const startFormatted = formatTime(startTime)
+        const endFormatted = formatTime(endTime)
 
-        return `${formatDate(event.date)} ${startFormatted} - ${endFormatted}`
+        // If dates are different, show both dates
+        if (startDateFormatted !== endDateFormatted) {
+            return `${startDateFormatted} ${startFormatted} - ${endDateFormatted} ${endFormatted}`
+        }
+
+        // If same date, show just one date
+        return `${startDateFormatted} ${startFormatted} - ${endFormatted}`
     }
 
     function isOngoing(startTime: string, endTime: string): boolean {
-        const start = new Date(startTime)
-        const end = new Date(endTime)
+        const start = new Date(startTime + 'Z') // Append Z to treat as UTC
+        const end = new Date(endTime + 'Z')     // Append Z to treat as UTC
         const now = new Date()
+        const nowUTC = new Date(now.getTime() + now.getTimezoneOffset() * 60000) // Convert to UTC
 
-        return now >= start && now <= end
+        return nowUTC >= start && nowUTC <= end
     }
 
     return (
         <main className="container mx-auto py-6 px-4 md:px-6">
             <div className="max-w-3xl mx-auto">
                 <div className="mb-6">
-                    <Link href="/" className="text-primary hover:underline">
+                    <Link href="/events" className="text-primary hover:underline">
                         &larr; Back to events
                     </Link>
                 </div>
@@ -68,7 +77,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
                     <div>
                         <Badge className="mb-2 bg-secondary hover:bg-secondary/80">{event.event_type}</Badge>
                         <h1 className="text-3xl font-bold">{event.title}</h1>
-                        <div className="text-muted-foreground">Hosted by {event.host?.name || "Anonymous"}</div>
+                        <div className="text-muted-foreground">Hosted by {event.host || "Anonymous"}</div>
                     </div>
 
                     <AttendButton eventId={event.id} attendees_count={event.attendees_count} isAttending={isAttending} userId={user?.id} />
@@ -93,19 +102,17 @@ export default async function EventPage({ params }: { params: { id: string } }) 
                             <MapPin className="h-5 w-5 mr-3 mt-0.5 text-primary" />
                             <div>
                                 <h3 className="font-medium">Location</h3>
-                                <p>{event.location}</p>
+                                <p>{event.location.toLowerCase() !== 'none' ? event.location : event.host}</p>
                             </div>
                         </div>
 
-                        {event.cost && (
-                            <div className="flex items-start">
-                                <div className="h-5 w-5 mr-3 mt-0.5 text-primary">$</div>
-                                <div>
-                                    <h3 className="font-medium">Cost</h3>
-                                    <p>{typeof event.cost === "number" ? `$${event.cost.toFixed(2)}` : event.cost}</p>
-                                </div>
+                        <div className="flex items-start">
+                            <div className="h-5 w-5 mr-3 mt-0.5 text-primary">$</div>
+                            <div>
+                                <h3 className="font-medium">Cost</h3>
+                                <p>{typeof event.cost === "number" ? event.cost === 0 ? "Free" : `$${event.cost.toFixed(2)}` : 'Unknown'}</p>
                             </div>
-                        )}
+                        </div>
 
                         {event.website && (
                             <div className="flex items-start">
