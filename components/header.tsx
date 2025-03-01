@@ -61,7 +61,7 @@ export function Header({ user }: HeaderProps) {
                             <Button variant="ghost" asChild>
                                 <Link
                                     href={{
-                                        pathname: "/auth/login",
+                                        pathname: "/login",
                                         query: { redirect: pathname },
                                     }}
                                 >
@@ -71,7 +71,7 @@ export function Header({ user }: HeaderProps) {
                             <Button asChild>
                                 <Link
                                     href={{
-                                        pathname: "/auth/register",
+                                        pathname: "/register",
                                         query: { redirect: pathname },
                                     }}
                                 >
