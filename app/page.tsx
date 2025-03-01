@@ -31,6 +31,9 @@ export default async function Home() {
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
               Find Your Next <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Adventure</span>
             </h1>
+            <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
+              In <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Logan, Utah</span>
+            </h2>
             <p className="max-w-[700px] text-muted-foreground md:text-xl">
               Join exciting events, meet new people, and create unforgettable memories in your community.
             </p>
