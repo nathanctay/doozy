@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon, X } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format } from "date-fns"
 
 interface EventFiltersProps {
@@ -24,7 +24,18 @@ export function EventFilters({ eventTypes, searchParams }: EventFiltersProps) {
     const router = useRouter()
     const params = useSearchParams()
     const pathname = usePathname()
-    const [date, setDate] = useState<Date | undefined>(searchParams.date ? new Date(searchParams.date) : undefined)
+
+    const today = new Date()
+    const formattedToday = format(today, "yyyy-MM-dd")
+    const [date, setDate] = useState<Date | undefined>(
+        searchParams.date ? new Date(searchParams.date) : new Date()
+    )
+
+    useEffect(() => {
+        if (!params.has("date")) {
+            updateFilter("date", formattedToday)
+        }
+    }, [])
 
     const updateFilter = (key: string, value: string | null) => {
         const newParams = new URLSearchParams(params.toString())
